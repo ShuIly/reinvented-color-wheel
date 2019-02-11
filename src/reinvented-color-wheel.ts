@@ -31,7 +31,7 @@ if (!pointerEventSupported && 'ontouchend' in window) {
       callback(event)
     }
   })
-  onDragMove = (element, callback) => addEventListener(pointerEventSupported ? 'pointermove' : 'mousemove', event => {
+  onDragMove = (element, callback) => element.addEventListener(pointerEventSupported ? 'pointermove' : 'mousemove', event => {
     if (dragging === element) {
       callback(event)
     }
