@@ -7,7 +7,7 @@ import _hex2rgb from 'pure-color/parse/hex'
 import { normalizeHsvOrDefault, normalizeHsl } from './normalize'
 
 let onDragStart: (element: HTMLElement, callback: (event: { clientX: number, clientY: number }) => any) => any
-let onDragMove:  (element: HTMLElement, callback: (event: { clientX: number, clientY: number }) => any) => any
+let onDragMove: (element: HTMLElement, callback: (event: { clientX: number, clientY: number }) => any) => any
 
 let dragging: HTMLElement | boolean | undefined
 const pointerEventSupported = 'PointerEvent' in window
@@ -36,7 +36,6 @@ if (!pointerEventSupported && 'ontouchend' in window) {
       callback(event)
     }
   })
-  addEventListener(pointerEventSupported ? 'pointerup' : 'mouseup', () => { dragging = undefined })
 }
 
 export interface ReinventedColorWheelOptions {
@@ -59,7 +58,7 @@ const defaultOptions = {
   wheelThickness: 20,
   handleDiameter: 16,
   wheelReflectsSaturation: true,
-  onChange: (() => {}) as NonNullable<ReinventedColorWheelOptions['onChange']>,
+  onChange: (() => { }) as NonNullable<ReinventedColorWheelOptions['onChange']>,
 }
 
 export default class ReinventedColorWheel {
@@ -72,19 +71,19 @@ export default class ReinventedColorWheel {
   static rgb2hex = _rgb2hex
   static hex2rgb = _hex2rgb
 
-  wheelDiameter           = this._option('wheelDiameter')
-  wheelThickness          = this._option('wheelThickness')
-  handleDiameter          = this._option('handleDiameter')
-  onChange                = this._option('onChange')
+  wheelDiameter = this._option('wheelDiameter')
+  wheelThickness = this._option('wheelThickness')
+  handleDiameter = this._option('handleDiameter')
+  onChange = this._option('onChange')
   wheelReflectsSaturation = this._option('wheelReflectsSaturation')
 
-  rootElement      = this.options.appendTo.appendChild(createElementWithClass('div', 'reinvented-color-wheel'))
-  hueWheelElement  = this.rootElement.appendChild(createElementWithClass('canvas',   'reinvented-color-wheel--hue-wheel'))
-  hueWheelContext  = this.hueWheelElement.getContext('2d')!
-  hueHandleElement = this.rootElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--hue-handle'))
-  svSpaceElement   = this.rootElement.appendChild(createElementWithClass('canvas',   'reinvented-color-wheel--sv-space'))
-  svSpaceContext   = this.svSpaceElement.getContext('2d')!
-  svHandleElement  = this.rootElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--sv-handle'))
+  rootElement = this.options.appendTo.appendChild(createElementWithClass('div', 'reinvented-color-wheel'))
+  hueWheelElement = this.rootElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--hue-wheel'))
+  hueWheelContext = this.hueWheelElement.getContext('2d')!
+  hueHandleElement = this.rootElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--hue-handle'))
+  svSpaceElement = this.rootElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--sv-space'))
+  svSpaceContext = this.svSpaceElement.getContext('2d')!
+  svHandleElement = this.rootElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--sv-handle'))
 
   private _redrawHueWheelRequested: boolean | undefined
 
@@ -112,24 +111,17 @@ export default class ReinventedColorWheel {
 
     this._hsv = normalizeHsvOrDefault(
       options.hsv ? options.hsv :
-      options.hsl ? ReinventedColorWheel.hsl2hsv(options.hsl) :
-      options.rgb ? ReinventedColorWheel.rgb2hsv(options.rgb) :
-      options.hex ? ReinventedColorWheel.rgb2hsv(ReinventedColorWheel.hex2rgb(options.hex)) :
-      undefined,
+        options.hsl ? ReinventedColorWheel.hsl2hsv(options.hsl) :
+          options.rgb ? ReinventedColorWheel.rgb2hsv(options.rgb) :
+            options.hex ? ReinventedColorWheel.rgb2hsv(ReinventedColorWheel.hex2rgb(options.hex)) :
+              undefined,
       defaultOptions.hsv
     )
     this._hsl = normalizeHsl(ReinventedColorWheel.hsv2hsl(this._hsv))
     this._rgb = ReinventedColorWheel.hsv2rgb(this._hsv)
     this._hex = ReinventedColorWheel.rgb2hex(this._rgb)
 
-    onDragStart(this.hueWheelElement, event => {
-      const rect = this.hueWheelElement.getBoundingClientRect()
-      if (this.hueWheelContext.getImageData(event.clientX - rect.left, event.clientY - rect.top, 1, 1).data[3]) {
-        this._onMoveHueHandle(event)
-      } else {
-        dragging = undefined
-      }
-    })
+    onDragStart(this.hueWheelElement, this._onStartHueHandle)
     onDragMove(this.hueWheelElement, this._onMoveHueHandle)
     onDragStart(this.svSpaceElement, this._onMoveSvHandle)
     onDragMove(this.svSpaceElement, this._onMoveSvHandle)
@@ -141,7 +133,7 @@ export default class ReinventedColorWheel {
     this.svSpaceElement.width = this.svSpaceElement.height = (this.wheelDiameter - this.wheelThickness * 2) * Math.sqrt(2) / 2
 
     const hueHandleStyle = this.hueHandleElement.style
-    const svHandleStyle  = this.svHandleElement.style
+    const svHandleStyle = this.svHandleElement.style
     hueHandleStyle.width = hueHandleStyle.height = svHandleStyle.width = svHandleStyle.height = `${this.handleDiameter}px`
     hueHandleStyle.marginLeft = hueHandleStyle.marginTop = svHandleStyle.marginLeft = svHandleStyle.marginTop = `${-this.handleDiameter / 2}px`
 
@@ -149,6 +141,36 @@ export default class ReinventedColorWheel {
     this._redrawHueHandle()
     this._redrawSvSpace()
     this._redrawSvHandle()
+  }
+
+  destroy() {
+    //@ts-ignore
+    this.hueWheelElement.__zone_symbol__removeEventListener('touchmove', this._onMoveHueHandle);
+    //@ts-ignore
+    this.hueWheelElement.__zone_symbol__removeEventListener('pointermove', this._onMoveHueHandle);
+    //@ts-ignore
+    this.hueWheelElement.__zone_symbol__removeEventListener('mousemove', this._onMoveHueHandle);
+
+    //@ts-ignore
+    this.hueWheelElement.__zone_symbol__removeEventListener('touchstart', this._onStartHueHandle);
+    //@ts-ignore
+    this.hueWheelElement.__zone_symbol__removeEventListener('pointerdown', this._onStartHueHandle);
+    //@ts-ignore
+    this.hueWheelElement.__zone_symbol__removeEventListener('mousedown', this._onStartHueHandle);
+
+    //@ts-ignore
+    this.svSpaceElement.__zone_symbol__removeEventListener('touchstart', this._onMoveSvHandle);
+    //@ts-ignore
+    this.svSpaceElement.__zone_symbol__removeEventListener('pointerdown', this._onMoveSvHandle);
+    //@ts-ignore
+    this.svSpaceElement.__zone_symbol__removeEventListener('mousedown', this._onMoveSvHandle);
+
+    //@ts-ignore
+    this.svSpaceElement.__zone_symbol__removeEventListener('touchmove', this._onMoveSvHandle);
+    //@ts-ignore
+    this.svSpaceElement.__zone_symbol__removeEventListener('pointermove', this._onMoveSvHandle);
+    //@ts-ignore
+    this.svSpaceElement.__zone_symbol__removeEventListener('mousemove', this._onMoveSvHandle);
   }
 
   private _setHSV(hsv: number[]) {
@@ -228,6 +250,15 @@ export default class ReinventedColorWheel {
     const svHandleStyle = this.svHandleElement.style
     svHandleStyle.left = `${svSpaceElement.offsetLeft + svSpaceElement.offsetWidth * this._hsv[1] / 100}px`
     svHandleStyle.top = `${svSpaceElement.offsetTop + svSpaceElement.offsetHeight * (1 - this._hsv[2] / 100)}px`
+  }
+
+  private _onStartHueHandle = (event: any) => {
+    const rect = this.hueWheelElement.getBoundingClientRect()
+    if (this.hueWheelContext.getImageData(event.clientX - rect.left, event.clientY - rect.top, 1, 1).data[3]) {
+      this._onMoveHueHandle(event)
+    } else {
+      dragging = undefined
+    }
   }
 
   private _onMoveHueHandle = (event: { clientX: number, clientY: number }) => {
