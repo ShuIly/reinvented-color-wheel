@@ -1,8 +1,8 @@
 {
-  "name": "reinvented-color-wheel",
-  "version": "0.2.3",
-  "description": "A vanilla-js touch-friendly HSV color picker inspired by Farbtastic Color Picker.",
-  "repository": "luncheon/reinvented-color-wheel",
+  "name": "ng-reinvented-color-wheel",
+  "version": "0.3.3",
+  "description": "Angular implementation of reinvented-color-wheel by lucheon.",
+  "repository": "shuily/reinvented-color-wheel",
   "main": "cjs/reinvented-color-wheel.js",
   "module": "es/reinvented-color-wheel.js",
   "types": "es/reinvented-color-wheel.d.ts",
