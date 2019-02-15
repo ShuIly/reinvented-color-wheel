@@ -62,6 +62,9 @@ export default class ReinventedColorWheel {
 	private _rgb: number[]
 	private _hex: string
 
+	private hueOnDragStart: Function;
+	private svOnDragStart: Function;
+
 	get hsv() { return this._hsv }
 	get hsl() { return this._hsl }
 	get rgb() { return this._rgb }
@@ -91,7 +94,7 @@ export default class ReinventedColorWheel {
 		this._rgb = ReinventedColorWheel.hsv2rgb(this._hsv)
 		this._hex = ReinventedColorWheel.rgb2hex(this._rgb)
 
-		var hueOnDragStart = (event: any) => {
+		this.hueOnDragStart = (event: any) => {
 			if (event.button === 0) {
 				this._onMoveHueHandle(event);
 			}
@@ -111,7 +114,7 @@ export default class ReinventedColorWheel {
 
 		};
 
-		var svOnDragStart = (event: any) => {
+		this.svOnDragStart = (event: any) => {
 			if (event.button === 0) {
 				this._onMoveSvHandle(event);
 			}
@@ -157,9 +160,9 @@ export default class ReinventedColorWheel {
 
 	destroy() {
 		// @ts-ignore
-		this.hueWheelElement.__zone_symbol__removeEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', hueOnDragStart);
+		this.hueWheelElement.__zone_symbol__removeEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', this.hueOnDragStart);
 		// @ts-ignore
-		this.svSpaceElement.__zone_symbol__removeEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', svOnDragStart);
+		this.svSpaceElement.__zone_symbol__removeEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', this.svOnDragStart);
 	}
 
 	private _setHSV(hsv: number[]) {
