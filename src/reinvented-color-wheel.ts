@@ -135,9 +135,9 @@ export default class ReinventedColorWheel {
 		};
 
 		// @ts-ignore
-		this.hueWheelElement.__zone_symbol__addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', hueOnDragStart);
+		this.hueWheelElement.__zone_symbol__addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', this.hueOnDragStart);
 		// @ts-ignore
-		this.svSpaceElement.__zone_symbol__addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', svOnDragStart);
+		this.svSpaceElement.__zone_symbol__addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', this.svOnDragStart);
 
 
 		this.redraw()
