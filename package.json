@@ -1,6 +1,6 @@
 {
   "name": "ng-reinvented-color-wheel",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Angular implementation of reinvented-color-wheel by lucheon.",
   "repository": "shuily/reinvented-color-wheel",
   "main": "cjs/reinvented-color-wheel.js",
